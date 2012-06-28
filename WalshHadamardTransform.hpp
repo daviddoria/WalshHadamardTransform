@@ -96,45 +96,28 @@ void WalshHadamardTransform<TImage>::MatrixToImage(const Eigen::MatrixXf& matrix
 }
 
 template <typename TImage>
-Eigen::MatrixXf WalshHadamardTransform<TImage>::SequencyOrdering(const Eigen::MatrixXf& matrix)
+Eigen::MatrixXf WalshHadamardTransform<TImage>::SequencyOrdered(const unsigned int k)
 {
-  /* The sequency ordering of the rows of the Walsh matrix can be derived from the
-   * ordering of the Hadamard matrix by first applying the bit-reversal permutation
-   * and then the Gray code permutation.*/
-  Eigen::MatrixXf sequencyMatrix = ReverseColumns(matrix);
+//   if(k not power of 2)
+//   {
+//     throw;
+//   }
 
-  for(int r = 0; r < matrix.rows(); ++r)
-  {
-    std::stringstream ss;
-    for(int c = 0; c < matrix.cols(); ++c)
-    {
-      if(sequencyMatrix(r,c) == 1)
-      {
-        ss << "1";
-      }
-      else if(sequencyMatrix(r,c) == -1)
-      {
-        ss << "0";
-      }
-    }
-    std::cout << "Binary string " << ss.str() << std::endl;
-    boost::dynamic_bitset<> binary(ss.str());
-    boost::dynamic_bitset<> graycode = BinaryToGray(binary);
-    // Replace the elements in reverse order (since the binary strings were constructed fromt he matrix elements in forward order,
-    // but the graycode elements are read with [.] which is reverse order (i.e. least significant bit first)
-    for(int c = 0; c < matrix.cols(); ++c)
-    {
-      if(graycode[c] == 1)
-      {
-        sequencyMatrix(r,matrix.cols() - 1 - c) = 1;
-      }
-      else if(graycode[c] == 0)
-      {
-        sequencyMatrix(r,matrix.cols() - 1 - c) = -1;
-      }
-    }
-  }
+  // WH[c] = 1/sqrt(N) (-1)^\sum_{i=0}^{n-1} b_i(c) p_i(v)
+  // where
+  // WH[c] is the c^th basis vector
+  // v is the index int he frequency domain
+  // N is the number of paoints in the basis vector
+  // n = log_2(N) which is the number of bits in the number N
+  // b_i(c) is found by considering c as a binary number and finding the ith bit
+  // p_i(v) is:
+  // p_0(v) = b_{n-1}(v)
+  // p_1(v) = b_{n-1}(v) + b_{n-2}(v)
+  // p_2(v) = b_{n-2}(v) + b_{n-3}(v)
+  // ...
+  // p_{n-1}(v) = b_1(v) + b_0(v)
 
+  Eigen::MatrixXf sequencyMatrix
   return sequencyMatrix;
 }
 
